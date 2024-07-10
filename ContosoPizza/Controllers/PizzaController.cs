@@ -9,7 +9,7 @@ namespace ContosoPizza.Controllers;
 public class PizzaController : ControllerBase
 {
     PizzaService _service;
-    
+
     public PizzaController(PizzaService service)
     {
         _service = service;
@@ -21,12 +21,13 @@ public class PizzaController : ControllerBase
         return _service.GetAll();
     }
 
+
     [HttpGet("{id}")]
     public ActionResult<Pizza> GetById(int id)
     {
         var pizza = _service.GetById(id);
 
-        if(pizza is not null)
+        if (pizza is not null)
         {
             return pizza;
         }
@@ -43,6 +44,12 @@ public class PizzaController : ControllerBase
         var pizza = _service.Create(newPizza);
         return CreatedAtAction(nameof(GetById), new { id = pizza!.Id }, pizza);
     }
+    [HttpPost("/createtopping")]
+    public IActionResult createTopping(Topping newTopping)
+    {
+        var topping = _service.createTopping(newTopping);
+        return CreatedAtAction(nameof(GetById), new { id = newTopping!.Id }, newTopping);
+    }
 
     [HttpPut("{id}/addtopping")]
     public IActionResult AddTopping(int id, int toppingId)
@@ -52,12 +59,19 @@ public class PizzaController : ControllerBase
         if(pizzaToUpdate is not null)
         {
             _service.AddTopping(id, toppingId);
-            return NoContent();    
+            return Ok();    
         }
         else
         {
             return NotFound();
         }
+    }
+
+    [HttpPost("/newsauce")]
+    public IActionResult NewSauce(Sauce sauce)
+    {
+        var newSauce = _service.NewSauce(sauce);
+        return Created();
     }
 
     [HttpPut("{id}/updatesauce")]
